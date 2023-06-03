@@ -1,0 +1,6 @@
+{
+    "featureFlags": {
+      "homeRedesign": true,
+      "searchRedesign": true
+    }
+  }

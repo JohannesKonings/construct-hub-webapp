@@ -19,5 +19,4 @@ tsconfig.tsbuildinfo
 /.vscode/
 !/build
 /public
-/build/config.json
 src/__fixtures__
