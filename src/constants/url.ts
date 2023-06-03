@@ -1,9 +1,9 @@
 export const API_PATHS = {
   PACKAGES_PREFIX: "/data",
-  CATALOG_SUFFIX: "/catalog.json",
+  CATALOG_SUFFIX: "./catalog.json",
   ASSEMBLY_SUFFIX: "/assembly.json",
   METADATA_SUFFIX: "/metadata.json",
-  CONFIG: "/config.json",
+  CONFIG: "./config.json",
   STATS: "/stats.json",
   ALL_VERSIONS: "/all-versions.json",
 } as const;
