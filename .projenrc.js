@@ -135,20 +135,20 @@ project.npmignore.addPatterns("/.vscode/");
   })();
 
   const gitHubPageWorkflow = project.github.addWorkflow("github-pages");
-  gitHubPageWorkflow.on({ push: { branches: ['main', 'pages'] } });
-  gitHubPageWorkflow.addJob('deploy', {
-    name: 'deploy',
+  gitHubPageWorkflow.on({ push: { branches: ["main", "pages"] } });
+  gitHubPageWorkflow.addJob("deploy", {
+    name: "deploy",
     environment: {
-      name: 'github-pages',
-      url: "${{ steps.deployment.outputs.page_url }}"
+      name: "github-pages",
+      url: "${{ steps.deployment.outputs.page_url }}",
     },
-    runsOn: 'ubuntu-latest',
-    permissions: { contents: 'read', pages: 'write', "id-token": 'write' },
-    concurrency: { group: 'github-pages', "cancel-in-progress": true },
+    runsOn: "ubuntu-latest",
+    permissions: { contents: "read", pages: "write", "id-token": "write" },
+    concurrency: { group: "github-pages", "cancel-in-progress": true },
     steps: [
       {
-        name: 'Checkout',
-        uses: 'actions/checkout@v3',
+        name: "Checkout",
+        uses: "actions/checkout@v3",
       },
       {
         name: "Setup Pages",
@@ -156,7 +156,7 @@ project.npmignore.addPatterns("/.vscode/");
       },
       {
         name: "build",
-        run: "yarn install && yarn build",
+        run: "export PUBLIC_URL=. && yarn install && yarn build",
       },
       {
         name: "Upload artifact",
@@ -169,9 +169,8 @@ project.npmignore.addPatterns("/.vscode/");
         name: "Deploy to GitHub Pages",
         id: "deployment",
         uses: "actions/deploy-pages@v2",
-      }
+      },
     ],
-
   });
 
   const cypressRunSteps = [
