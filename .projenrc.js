@@ -140,6 +140,7 @@ project.npmignore.addPatterns("/.vscode/");
     name: 'deploy',
     environment: {
       name: 'github-pages',
+      url: "${{ steps.deployment.outputs.page_url }}"
     },
     runsOn: 'ubuntu-latest',
     permissions: { contents: 'read', pages: 'write', "id-token": 'write' },
@@ -148,6 +149,26 @@ project.npmignore.addPatterns("/.vscode/");
       {
         name: 'Checkout',
         uses: 'actions/checkout@v3',
+      },
+      {
+        name: "Setup Pages",
+        uses: "actions/configure-pages@v3",
+      },
+      {
+        name: "build",
+        run: "yarn build",
+      },
+      {
+        name: "Upload artifact",
+        uses: "actions/upload-pages-artifact@v1",
+        with: {
+          path: "build",
+        },
+      },
+      {
+        name: "Deploy to GitHub Pages",
+        id: "deployment",
+        uses: "actions/deploy-pages@v2",
       }
     ],
 
