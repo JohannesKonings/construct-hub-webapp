@@ -156,7 +156,7 @@ project.npmignore.addPatterns("/.vscode/");
       },
       {
         name: "build",
-        run: "yarn build",
+        run: "yarn install && yarn build",
       },
       {
         name: "Upload artifact",
