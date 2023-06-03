@@ -1,5 +1,5 @@
 const { web } = require("projen");
-const { workflows } = require("projen/lib/github");
+const { workflows, GithubWorkflow } = require("projen/lib/github");
 
 const PROXY_URL = "https://constructs.dev/";
 
@@ -17,8 +17,8 @@ const project = new web.ReactTypeScriptProject({
 
   // since this is an app project, we need to enable these explicitly
   // in order to be able to publish this as an npm module.
-  releaseToNpm: true,
-  releaseWorkflow: true,
+  releaseToNpm: false,
+  releaseWorkflow: false,
   package: true,
   tsconfig: {
     compilerOptions: {
@@ -133,6 +133,25 @@ project.npmignore.addPatterns("/.vscode/");
       exec: "npx react-app-rewired build && CI=true yarn proxy-server",
     });
   })();
+
+  const gitHubPageWorkflow = project.github.addWorkflow("github-pages");
+  gitHubPageWorkflow.on({ push: { branches: ['main', 'pages'] } });
+  gitHubPageWorkflow.addJob('deploy', {
+    name: 'deploy',
+    environment: {
+      name: 'github-pages',
+    },
+    runsOn: 'ubuntu-latest',
+    permissions: { contents: 'read', pages: 'write', "id-token": 'write' },
+    concurrency: { group: 'github-pages', "cancel-in-progress": true },
+    steps: [
+      {
+        name: 'Checkout',
+        uses: 'actions/checkout@v3',
+      }
+    ],
+
+  });
 
   const cypressRunSteps = [
     {
@@ -319,25 +338,25 @@ rewireCRA(project.tasks.tryFind("dev"));
 
 // trigger construct-hub to pick up changes from construct-hub-webapp
 // whenever a new release is made
-project.release.addJobs({
-  upgrade_construct_hub: {
-    name: "Upgrade construct-hub",
-    runsOn: "ubuntu-latest",
-    permissions: {
-      actions: workflows.JobPermission.WRITE,
-    },
-    needs: ["release", "release_github", "release_npm"],
-    steps: [
-      {
-        name: "Trigger upgrade workflow",
-        run: 'gh api -X POST /repos/cdklabs/construct-hub/actions/workflows/upgrade-main.yml/dispatches --field ref="main"',
-        env: {
-          GITHUB_TOKEN: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
-        },
-      },
-    ],
-  },
-});
+// project.release.addJobs({
+//   upgrade_construct_hub: {
+//     name: "Upgrade construct-hub",
+//     runsOn: "ubuntu-latest",
+//     permissions: {
+//       actions: workflows.JobPermission.WRITE,
+//     },
+//     needs: ["release", "release_github", "release_npm"],
+//     steps: [
+//       {
+//         name: "Trigger upgrade workflow",
+//         run: 'gh api -X POST /repos/cdklabs/construct-hub/actions/workflows/upgrade-main.yml/dispatches --field ref="main"',
+//         env: {
+//           GITHUB_TOKEN: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
+//         },
+//       },
+//     ],
+//   },
+// });
 
 // replace default service worker script with no-op worker
 const replaceWorker = project.addTask("replace-worker");
