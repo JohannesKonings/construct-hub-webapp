@@ -4,7 +4,7 @@ export const API_PATHS = {
   ASSEMBLY_SUFFIX: "/assembly.json",
   METADATA_SUFFIX: "/metadata.json",
   CONFIG: "./config.json",
-  STATS: "/stats.json",
+  STATS: "./stats.json",
   ALL_VERSIONS: "/all-versions.json",
 } as const;
 
